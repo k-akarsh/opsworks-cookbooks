@@ -1,6 +1,9 @@
 server {
   listen   80;
   server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
+  if ($request_uri !~ "^/admin(/+\w|/|$)"){
+    return 301 http://urbanladder.com$request_uri;
+  }
   access_log  <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>.access.log;
 
   location / {
@@ -19,7 +22,6 @@ server {
   }
   
   location /nginx_status {
-    stub_status on;
     access_log off;
     allow 127.0.0.1;
     deny all;
